@@ -52,6 +52,7 @@ class CachedImage extends React.Component {
     activityIndicatorProps: PropTypes.object.isRequired,
     loadingIndicator: PropTypes.func,
     plainImage: PropTypes.bool,
+    renderFallback: PropTypes.func,
 
     // ImageCacheManager options
     ...ImageCacheManagerOptionsPropTypes
@@ -177,13 +178,28 @@ class CachedImage extends React.Component {
     } : this.props.source
 
     if (this.props.fallbackSource && !this.state.cachedImagePath) {
-      return this.props.renderImage({
-          ...props,
-          key: `${props.key || source.uri}error`,
-          style,
-          source: this.props.fallbackSource
-        },
-        this.props.plainImage)
+      if (this.props.renderFallback) {
+        const imageStyle = [this.props.style, styles.loaderPlaceholder]
+
+        const activityIndicatorProps = _.omit(this.props.activityIndicatorProps, ['style'])
+        const activityIndicatorStyle = this.props.activityIndicatorProps.style || styles.loader
+
+        const Fallback = this.props.renderFallback
+
+        return (
+          <View style={[imageStyle, activityIndicatorStyle]}>
+            <Fallback {...activityIndicatorProps} />
+          </View>
+        )
+      } else {
+        return this.props.renderImage({
+            ...props,
+            key: `${props.key || source.uri}error`,
+            style,
+            source: this.props.fallbackSource
+          },
+          this.props.plainImage)
+      }
     }
 
     return this.props.renderImage({
@@ -231,13 +247,17 @@ class CachedImage extends React.Component {
         source,
         children: (
           LoadingIndicator
-            ? <View style={[imageStyle, activityIndicatorStyle]}>
-            <LoadingIndicator {...activityIndicatorProps} />
-          </View>
-            : <ActivityIndicator
-            {...activityIndicatorProps}
-            style={activityIndicatorStyle}
-          />
+            ? (
+            <View style={[imageStyle, activityIndicatorStyle]}>
+              <LoadingIndicator {...activityIndicatorProps} />
+            </View>
+          )
+            : (
+            <ActivityIndicator
+              {...activityIndicatorProps}
+              style={activityIndicatorStyle}
+            />
+          )
         )
       },
       this.props.plainImage)
