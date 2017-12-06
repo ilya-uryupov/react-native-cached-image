@@ -58,7 +58,7 @@ class CachedImage extends React.Component {
   }
 
   static defaultProps = {
-    renderImage: props => (props.plainImage
+    renderImage: (props, plainImage = false) => (plainImage
         ? <Image ref={CACHED_IMAGE_REF} {...props}/>
         : <ImageBackground imageStyle={props.style} ref={CACHED_IMAGE_REF} {...props} />
     ),
@@ -175,20 +175,24 @@ class CachedImage extends React.Component {
     const source = (this.state.isCacheable && this.state.cachedImagePath) ? {
       uri: 'file://' + this.state.cachedImagePath
     } : this.props.source
+
     if (this.props.fallbackSource && !this.state.cachedImagePath) {
       return this.props.renderImage({
-        ...props,
-        key: `${props.key || source.uri}error`,
-        style,
-        source: this.props.fallbackSource
-      })
+          ...props,
+          key: `${props.key || source.uri}error`,
+          style,
+          source: this.props.fallbackSource
+        },
+        this.props.plainImage)
     }
+
     return this.props.renderImage({
-      ...props,
-      key: props.key || source.uri,
-      style,
-      source
-    })
+        ...props,
+        key: props.key || source.uri,
+        style,
+        source
+      },
+      this.props.plainImage)
   }
 
   renderLoader () {
@@ -221,21 +225,22 @@ class CachedImage extends React.Component {
     }
     // otherwise render an image with the defaultSource with the ActivityIndicator on top of it
     return this.props.renderImage({
-      ...imageProps,
-      style: imageStyle,
-      key: source.uri,
-      source,
-      children: (
-        LoadingIndicator
-          ? <View style={[imageStyle, activityIndicatorStyle]}>
-          <LoadingIndicator {...activityIndicatorProps} />
-        </View>
-          : <ActivityIndicator
-          {...activityIndicatorProps}
-          style={activityIndicatorStyle}
-        />
-      )
-    })
+        ...imageProps,
+        style: imageStyle,
+        key: source.uri,
+        source,
+        children: (
+          LoadingIndicator
+            ? <View style={[imageStyle, activityIndicatorStyle]}>
+            <LoadingIndicator {...activityIndicatorProps} />
+          </View>
+            : <ActivityIndicator
+            {...activityIndicatorProps}
+            style={activityIndicatorStyle}
+          />
+        )
+      },
+      this.props.plainImage)
   }
 
 }
