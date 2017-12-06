@@ -15,6 +15,7 @@ const ImageCacheManager = require('./ImageCacheManager')
 const {
   View,
   ImageBackground,
+  Image,
   ActivityIndicator,
   NetInfo,
   Platform,
