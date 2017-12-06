@@ -38,8 +38,9 @@ const styles = StyleSheet.create({
 
 function getImageProps (props) {
   return _.omit(props,
-    ['source', 'defaultSource', 'fallbackSource', 'LoadingIndicator', 'activityIndicatorProps', 'style',
-     'useQueryParamsInCacheKey', 'renderImage', 'resolveHeaders'])
+    ['source', 'defaultSource', 'fallbackSource', 'loadingIndicator', 'activityIndicatorProps',
+     'style',
+     'useQueryParamsInCacheKey', 'renderImage', 'resolveHeaders', 'renderPlain'])
 }
 
 const CACHED_IMAGE_REF = 'cachedImage'
@@ -49,6 +50,8 @@ class CachedImage extends React.Component {
   static propTypes = {
     renderImage: PropTypes.func.isRequired,
     activityIndicatorProps: PropTypes.object.isRequired,
+    loadingIndicator: PropTypes.func,
+    renderPlain: PropTypes.bool,
 
     // ImageCacheManager options
     ...ImageCacheManagerOptionsPropTypes
