@@ -136,15 +136,12 @@ class CachedImage extends React.Component {
 
     imageCacheManager.downloadAndCacheUrl(url, options)
                      .then(cachedImagePath => {
-                       debugger
                        this.safeSetState({
                          cachedImagePath,
                          cachedImageSource: source
                        })
                      })
-                     .catch((...err) => {
-                       console.log(err)
-                       debugger
+                     .catch(() => {
                        this.safeSetState({
                          cachedImagePath: null,
                          cachedImageSource: null,
@@ -173,7 +170,6 @@ class CachedImage extends React.Component {
 
   render () {
     if (!this.state.cachedImagePath) {
-      debugger
       return this.renderFallback()
     }
 
@@ -184,7 +180,6 @@ class CachedImage extends React.Component {
       ? {uri: 'file://' + this.state.cachedImagePath}
       : this.props.source
 
-    debugger
     return this.renderImage({
       ...imageProps,
       key: imageProps.key || source.uri,
